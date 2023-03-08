@@ -1,44 +1,52 @@
 // Use the D3 library to read in samples.json from the URL https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json.
 const url = 'https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json'
+d3.json(url).then(data=>{console.log(data)})
+
 
 // extract data from json
 var belly_data = d3.json(url).then(d => d);
 
 // Create a horizontal bar chart with a dropdown menu to display the top 10 OTUs found in that individual.
-let trace1 = {
-    x: sample_values,
-    y: otu_ids,
-    type: 'bar',
-    orientation:'h'
-  };
-  
-  let data = [trace1];
+let data = [
+  {
+    x:values.slice(0,10).reverse(),
+    y:ids.slice(0, 10).map(otuID => `OTU ${otuID}`).reverse(),
+    text:labels.slice(0,10).reverse(),
+    type:"bar",
+    orientation:"h"
+
+  }
+];
   
   let layout = {
     title: 'Top 10 OTUs found'
   };
   
-  Plotly.newPlot("plot", data, layout);
+  Plotly.newPlot("bar", data, layout);
   
 // Create a bubble chart that displays each sample.
-function plotBubble {(
+let bubbleData = [ 
+  {
+    x: ids,
+    y: values,
+    text: labels,
+    mode: "markers",
+    marker: {
+      color: ids,
+      size: values,
+      colorscale: 'Portland'
+      }
+  }
+];
+//create bubble chart layout
+let bubbleLayout = {
+    xaxis: { title: "OTU ID" },
+    hovermode: "closest",
+    };
 
-    belly_data.then(function(d) {
-        let results = d.samples.filter(subject => subject.id == name)[0];
 
-        let trace1 = {
-            x: results.otu_ids,
-            y: results.sample_values,
-            text: results.otu_labels,
-            mode: 'markers',
-            marker: {
-                size: results.sample_values.map(value => Math.sqrt(value)*8),
-                color: results.otu_ids
-            }
-        };
+Plotly.newPlot("bubble", bubbleData, bubbleLayout);
 
-        let data = [trace1];
-        }); 
 
-        Plotly.newPlot('bubble', data, layout);
-    )};
+ // Initialize the html
+ init();
